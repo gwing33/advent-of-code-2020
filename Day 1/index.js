@@ -1,5 +1,5 @@
 // Part 1: Find two numbers whos values total 2020. Once found, multiply them together.
-function getPart1Anwer(report) {
+function getPart1Answer(report) {
   return report.reduce((acc1, entry1, i) => {
     // If we have a value, no need to continue on.
     if (acc1) {
@@ -14,7 +14,7 @@ function getPart1Anwer(report) {
 }
 
 // Part 2: Find three numbers whos values total 2020. Once found, multiply them together.
-function getPart2Anwer(report) {
+function getPart2Answer(report) {
   return report.reduce((acc1, entry1, i1) => {
     // If we have a value, no need to continue on.
     if (acc1) {
@@ -242,5 +242,5 @@ const expenseReport = [
   1932,
 ];
 
-console.log("Part 1 Answer", getPart1Anwer(expenseReport));
-console.log("Part 2 Answer", getPart2Anwer(expenseReport));
+console.log("Part 1 Answer", getPart1Answer(expenseReport));
+console.log("Part 2 Answer", getPart2Answer(expenseReport));
