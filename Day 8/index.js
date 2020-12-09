@@ -1,53 +1,65 @@
 function parseInstructions(instructions) {
-    return instructions.split('\n').map(instruction => {
-        const [cmd, val] = instruction.split(' ');
-        return [cmd, parseInt(val, 10)];
-    });
+  return instructions.split("\n").map((instruction) => {
+    const [cmd, val] = instruction.split(" ");
+    return [cmd, parseInt(val, 10)];
+  });
 }
 
 function runCode({ count, indexesRun }, allCode, index) {
-    if (index >= allCode.length) {
-        return { count, indexesRun, done: true };
-    }
-    if (indexesRun.includes(index)) {
-        return { count, indexesRun, done: false };
-    }
-    const [cmd, val] = allCode[index];
-    if (cmd === 'nop') {
-        return runCode({ count, indexesRun: indexesRun.concat(index) }, allCode, index + 1);
-    }
-    if (cmd === 'acc') {
-        return runCode({ count: count + val, indexesRun: indexesRun.concat(index) }, allCode, index + 1);
-    }
-    // This is a jump
-    return runCode({ count: count, indexesRun: indexesRun.concat(index) }, allCode, index + val);
+  if (index >= allCode.length) {
+    return { count, indexesRun, done: true };
+  }
+  if (indexesRun.includes(index)) {
+    return { count, indexesRun, done: false };
+  }
+  const [cmd, val] = allCode[index];
+  if (cmd === "nop") {
+    return runCode(
+      { count, indexesRun: indexesRun.concat(index) },
+      allCode,
+      index + 1
+    );
+  }
+  if (cmd === "acc") {
+    return runCode(
+      { count: count + val, indexesRun: indexesRun.concat(index) },
+      allCode,
+      index + 1
+    );
+  }
+  // This is a jump
+  return runCode(
+    { count: count, indexesRun: indexesRun.concat(index) },
+    allCode,
+    index + val
+  );
 }
 
 function getPart1Answer(instructions) {
-    const code = parseInstructions(instructions);
-    const { count } = runCode({ count: 0, indexesRun: [] }, code, 0);
-    return count;
+  const code = parseInstructions(instructions);
+  const { count } = runCode({ count: 0, indexesRun: [] }, code, 0);
+  return count;
 }
 
 function getPart2Answer(instructions) {
-    const code = parseInstructions(instructions);
-    const { indexesRun } = runCode({ count: 0, indexesRun: [] }, code, 0);
-    let _count = 0;
-    // Reverse so we can work back through to find the line that needs to change
-    indexesRun.reverse().find((idx) => {
-        const [cmd, val] = code[idx];
-        if (cmd === 'nop' || cmd === 'jmp') {
-            const newCode = parseInstructions(instructions);
-            newCode[idx][0] = newCode[idx][0] === 'nop' ? 'jmp' : 'nop';
-            const { done, count } = runCode({ count: 0, indexesRun: [] }, newCode, 0);
-            if (done !== false) {
-                _count = count;
-            }
-            return done !== false;
-        }
-        return false;
-    });
-    return _count;
+  const code = parseInstructions(instructions);
+  const { indexesRun } = runCode({ count: 0, indexesRun: [] }, code, 0);
+  let _count = 0;
+  // Reverse so we can work back through to find the line that needs to change
+  indexesRun.reverse().find((idx) => {
+    const [cmd, val] = code[idx];
+    if (cmd === "nop" || cmd === "jmp") {
+      const newCode = parseInstructions(instructions);
+      newCode[idx][0] = newCode[idx][0] === "nop" ? "jmp" : "nop";
+      const { done, count } = runCode({ count: 0, indexesRun: [] }, newCode, 0);
+      if (done !== false) {
+        _count = count;
+      }
+      return done !== false;
+    }
+    return false;
+  });
+  return _count;
 }
 
 const instructionSet = `acc +50
@@ -705,5 +717,5 @@ nop -259
 acc +12
 jmp +1`;
 
-console.log('Part 1 Answer:', getPart1Answer(instructionSet));
-console.log('Part 2 Answer:', getPart2Answer(instructionSet));
+console.log("Part 1 Answer:", getPart1Answer(instructionSet));
+console.log("Part 2 Answer:", getPart2Answer(instructionSet));

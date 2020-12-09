@@ -1,51 +1,53 @@
 function getBagInfo(rules) {
-    return rules.reduce((acc, rule) => {
-        if (rule.includes('no other bags')) {
-            return acc;
-        }
+  return rules.reduce((acc, rule) => {
+    if (rule.includes("no other bags")) {
+      return acc;
+    }
 
-        const [main, sub] = rule.split('contain');
-        const mainColor = /([0-9]*)([a-z\s]+)bags?/g.exec(main)[2].trim();
-        const subColors = sub.split(',').map(c => {
-            const [_, count, color] = /([0-9]*)([a-z\s]+)bags?/g.exec(c);
-            return [parseInt(count, 10), color.trim()];
-        });
-        acc[mainColor] = subColors;
-        return acc;
-    }, {})
+    const [main, sub] = rule.split("contain");
+    const mainColor = /([0-9]*)([a-z\s]+)bags?/g.exec(main)[2].trim();
+    const subColors = sub.split(",").map((c) => {
+      const [_, count, color] = /([0-9]*)([a-z\s]+)bags?/g.exec(c);
+      return [parseInt(count, 10), color.trim()];
+    });
+    acc[mainColor] = subColors;
+    return acc;
+  }, {});
 }
 
 function findValidBags(bags, acceptedColors) {
-    const validColors = Object.keys(bags).filter(color => {
-        return bags[color].find(([_, c]) => acceptedColors.includes(c));
-    });
-    const mergedColors = acceptedColors.concat(validColors.filter(c => !acceptedColors.includes(c)));
-    if (mergedColors.length !== acceptedColors.length) {
-        return findValidBags(bags, mergedColors);
-    }
-    return mergedColors;
+  const validColors = Object.keys(bags).filter((color) => {
+    return bags[color].find(([_, c]) => acceptedColors.includes(c));
+  });
+  const mergedColors = acceptedColors.concat(
+    validColors.filter((c) => !acceptedColors.includes(c))
+  );
+  if (mergedColors.length !== acceptedColors.length) {
+    return findValidBags(bags, mergedColors);
+  }
+  return mergedColors;
 }
 
 function countBags(bags, color) {
-    if (!bags[color]) {
-        return 0;
-    }
-    return bags[color].reduce((acc, [count, bag]) => {
-        const subBagCount = countBags(bags, bag);
-        return acc + count + count * subBagCount;
-    }, 0);
+  if (!bags[color]) {
+    return 0;
+  }
+  return bags[color].reduce((acc, [count, bag]) => {
+    const subBagCount = countBags(bags, bag);
+    return acc + count + count * subBagCount;
+  }, 0);
 }
 
 function getPart1Answer(rules) {
-    const bags = getBagInfo(rules);
-    const validColors = findValidBags(bags, ['shiny gold'], 1);
-    return validColors.length - 1; // shiny gold we started with doesn't count.
-};
+  const bags = getBagInfo(rules);
+  const validColors = findValidBags(bags, ["shiny gold"], 1);
+  return validColors.length - 1; // shiny gold we started with doesn't count.
+}
 
 function getPart2Answer(rules) {
-    const bags = getBagInfo(rules);
-    return countBags(bags, 'shiny gold', 0);
-};
+  const bags = getBagInfo(rules);
+  return countBags(bags, "shiny gold", 0);
+}
 
 const allRules = `wavy turquoise bags contain no other bags.
 vibrant beige bags contain 4 drab lime bags, 1 muted violet bag, 5 drab plum bags, 5 shiny silver bags.
@@ -640,7 +642,9 @@ plaid teal bags contain 4 shiny teal bags, 2 wavy turquoise bags, 2 vibrant aqua
 dull violet bags contain 5 light coral bags, 1 vibrant tan bag.
 faded crimson bags contain 3 dark chartreuse bags, 2 vibrant cyan bags, 3 mirrored cyan bags.
 posh bronze bags contain 4 plaid lavender bags, 3 shiny gold bags, 5 mirrored coral bags, 2 shiny indigo bags.
-clear olive bags contain 2 muted gray bags, 2 dark red bags, 5 clear brown bags, 5 bright silver bags.`.split('\n');
+clear olive bags contain 2 muted gray bags, 2 dark red bags, 5 clear brown bags, 5 bright silver bags.`.split(
+  "\n"
+);
 
-console.log('Part 1 Answer:', getPart1Answer(allRules));
-console.log('Part 2 Answer:', getPart2Answer(allRules));
+console.log("Part 1 Answer:", getPart1Answer(allRules));
+console.log("Part 2 Answer:", getPart2Answer(allRules));

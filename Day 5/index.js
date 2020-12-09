@@ -1,54 +1,64 @@
 function getHalfRange([min, max], part) {
-    const half = (max - min + 1) / 2;
-    if (part === 'F' || part === 'L') {
-        return [min, max - half];
-    }
-    return [min + half, max];
+  const half = (max - min + 1) / 2;
+  if (part === "F" || part === "L") {
+    return [min, max - half];
+  }
+  return [min + half, max];
 }
 function getRow(rowParts) {
-    const [min,max] = rowParts.split('').reduce((acc, part) => {
-        return getHalfRange(acc, part);
-    }, [0, 127]);
-    
-    if (min === max) {
-        return min;
-    }
-    return null;
+  const [min, max] = rowParts.split("").reduce(
+    (acc, part) => {
+      return getHalfRange(acc, part);
+    },
+    [0, 127]
+  );
+
+  if (min === max) {
+    return min;
+  }
+  return null;
 }
 function getCol(colParts) {
-    const [min,max] = colParts.split('').reduce((acc, part) => {
-        return getHalfRange(acc, part);
-    }, [0, 7]);
-    
-    if (min === max) {
-        return min;
-    }
-    return null;
+  const [min, max] = colParts.split("").reduce(
+    (acc, part) => {
+      return getHalfRange(acc, part);
+    },
+    [0, 7]
+  );
+
+  if (min === max) {
+    return min;
+  }
+  return null;
 }
 function getSeatId(seat) {
-    const rowParts = seat.substring(0, 7);
-    const colParts = seat.substring(7, 10);
-    const row = getRow(rowParts);
-    const col = getCol(colParts);
-    return row * 8 + col;
+  const rowParts = seat.substring(0, 7);
+  const colParts = seat.substring(7, 10);
+  const row = getRow(rowParts);
+  const col = getCol(colParts);
+  return row * 8 + col;
 }
 
 function getPart1Answer(seats) {
-    const sortedSeats = seats.map(getSeatId).sort((a, b) => {
-        return a > b ? -1 : a < b ? 1 : 0;
-    });
-    return sortedSeats[0];
+  const sortedSeats = seats.map(getSeatId).sort((a, b) => {
+    return a > b ? -1 : a < b ? 1 : 0;
+  });
+  return sortedSeats[0];
 }
 
 function getPart2Answer(seats) {
-    const sortedSeats = seats.map(getSeatId).sort((a, b) => {
-        return a > b ? 1 : a < b ? -1 : 0;
-    });
-    const minId = sortedSeats[0];
-    const maxId = sortedSeats[sortedSeats.length - 1];
-    const allSeatPossibilities = Array(maxId - minId).fill().map((_,i) => i + minId + 1);
-    const missing = allSeatPossibilities.filter(id => !sortedSeats.includes(id));
-    return missing[0];
+  const sortedSeats = seats.map(getSeatId).sort((a, b) => {
+    return a > b ? 1 : a < b ? -1 : 0;
+  });
+  const minId = sortedSeats[0];
+  const maxId = sortedSeats[sortedSeats.length - 1];
+  const allSeatPossibilities = Array(maxId - minId)
+    .fill()
+    .map((_, i) => i + minId + 1);
+  const missing = allSeatPossibilities.filter(
+    (id) => !sortedSeats.includes(id)
+  );
+  return missing[0];
 }
 
 const seatList = `BFFFFFFLLR
@@ -922,7 +932,7 @@ BBFFBBFLLR
 BBFFBFFRLR
 FBBFFBFRRL
 FFFBFFFLRR
-FFBBBBFRRR`.split('\n');
+FFBBBBFRRR`.split("\n");
 
-console.log('Part 1 Answer:', getPart1Answer(seatList));
-console.log('Part 2 Answer:', getPart2Answer(seatList));
+console.log("Part 1 Answer:", getPart1Answer(seatList));
+console.log("Part 2 Answer:", getPart2Answer(seatList));

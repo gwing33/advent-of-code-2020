@@ -1,27 +1,35 @@
 function getYesAnswers(group) {
-    const groupAnswers = group.split('\n');
-    return groupAnswers.reduce((acc, answers) => {
-        return acc.concat(answers.split('').filter(answer => !acc.includes(answer)))
-    }, []);
+  const groupAnswers = group.split("\n");
+  return groupAnswers.reduce((acc, answers) => {
+    return acc.concat(
+      answers.split("").filter((answer) => !acc.includes(answer))
+    );
+  }, []);
 }
 
 function getAllYesAnswers(group) {
-    const groupAnswers = group.split('\n');
-    return groupAnswers.reduce((acc, answers, i) => {
-        const personAnswers = answers.split('');
-        if (i === 0) {
-            return personAnswers;
-        }
-        return acc.filter(answer => personAnswers.includes(answer));
-    }, []);
+  const groupAnswers = group.split("\n");
+  return groupAnswers.reduce((acc, answers, i) => {
+    const personAnswers = answers.split("");
+    if (i === 0) {
+      return personAnswers;
+    }
+    return acc.filter((answer) => personAnswers.includes(answer));
+  }, []);
 }
 
 function getPart1Answer(groups) {
-    return groups.reduce((count, group) => count + getYesAnswers(group).length, 0) ;
+  return groups.reduce(
+    (count, group) => count + getYesAnswers(group).length,
+    0
+  );
 }
 
 function getPart2Answer(groups) {
-    return groups.reduce((count, group) => count + getAllYesAnswers(group).length, 0) ;
+  return groups.reduce(
+    (count, group) => count + getAllYesAnswers(group).length,
+    0
+  );
 }
 
 const groupAnswers = `qpicundo
@@ -2262,5 +2270,5 @@ rtosmuxc
 fcelpwgamhnquzbsrtdxivjk
 tdjwzsaqhxunkfcvpbrmgil`.split(/\n\n+/);
 
-console.log('Part 1 Answer:', getPart1Answer(groupAnswers));
-console.log('Part 2 Answer:', getPart2Answer(groupAnswers));
+console.log("Part 1 Answer:", getPart1Answer(groupAnswers));
+console.log("Part 2 Answer:", getPart2Answer(groupAnswers));

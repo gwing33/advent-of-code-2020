@@ -1,49 +1,48 @@
-const between = (v, min, max) => parseInt(v,10) <= max && parseInt(v,10) >= min;
+const between = (v, min, max) =>
+  parseInt(v, 10) <= max && parseInt(v, 10) >= min;
 // const eyeColors = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'];
-const eyeColors = 'amb blu brn gry grn hzl oth'.split(' ');
+const eyeColors = "amb blu brn gry grn hzl oth".split(" ");
 const fieldRules = {
-    'byr': v => !!v && between(v, 1920, 2002),
-    'iyr': v => !!v && between(v, 2010, 2020),
-    'eyr': v => !!v && between(v, 2020, 2030),
-    'hgt': v => {
-        if (!v) {
-            return false;
-        }
-        const m = v.match(/^(\d+)(in|cm)$/);
-        if (!m) {
-            return false;
-        }
-        if (m[2] === 'in') {
-            return between(m[1], 59, 76);
-        }
-        if (m[2] === 'cm') {
-            return between(m[1], 150, 193);
-        }
-        return false;
-    },
-    'hcl': v => !!v && /^#[0-9a-f]{6}$/.test(v) ,
-    'ecl': v => !!v && eyeColors.includes(v),
-    'pid': v => !!v && /^\d{9}$/.test(v),
-    'cid': () => true,
+  byr: (v) => !!v && between(v, 1920, 2002),
+  iyr: (v) => !!v && between(v, 2010, 2020),
+  eyr: (v) => !!v && between(v, 2020, 2030),
+  hgt: (v) => {
+    if (!v) {
+      return false;
+    }
+    const m = v.match(/^(\d+)(in|cm)$/);
+    if (!m) {
+      return false;
+    }
+    if (m[2] === "in") {
+      return between(m[1], 59, 76);
+    }
+    if (m[2] === "cm") {
+      return between(m[1], 150, 193);
+    }
+    return false;
+  },
+  hcl: (v) => !!v && /^#[0-9a-f]{6}$/.test(v),
+  ecl: (v) => !!v && eyeColors.includes(v),
+  pid: (v) => !!v && /^\d{9}$/.test(v),
+  cid: () => true,
 };
 
-
 function getPart1Answer(entries) {
-    const requiredFields = ['byr', 'iyr','eyr','hgt','hcl','ecl','pid']; //cid
-    const requiredFieldEntries = entries.filter(entry => {
-        return requiredFields.every(field => entry[field]);
-    });
-    return requiredFieldEntries.length;
+  const requiredFields = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]; //cid
+  const requiredFieldEntries = entries.filter((entry) => {
+    return requiredFields.every((field) => entry[field]);
+  });
+  return requiredFieldEntries.length;
 }
 
-
 function getPart2Answer(entries) {
-    const validEntries = entries.filter(entry => {
-        return Object.entries(fieldRules).every(([field, valid]) => {
-            return valid(entry[field]);
-        });
+  const validEntries = entries.filter((entry) => {
+    return Object.entries(fieldRules).every(([field, valid]) => {
+      return valid(entry[field]);
     });
-    return validEntries.length;
+  });
+  return validEntries.length;
 }
 
 const batchFile = `iyr:2013 hcl:#ceb3a1
@@ -1103,10 +1102,9 @@ iyr:2023
 byr:2001 hcl:#4784a2 hgt:161cm iyr:2014 eyr:2025 pid:955262336
 ecl:amb`;
 
-const entries = batchFile.split(/\n\n+/)
-  .map(c => Object.fromEntries(
-    c.split(/[\n|\s]+/).map(s => s.split(':'))
-  ));
+const entries = batchFile
+  .split(/\n\n+/)
+  .map((c) => Object.fromEntries(c.split(/[\n|\s]+/).map((s) => s.split(":"))));
 
-console.log('Part 1 Answer:', getPart1Answer(entries));
-console.log('Part 2 Answer:', getPart2Answer(entries));
+console.log("Part 1 Answer:", getPart1Answer(entries));
+console.log("Part 2 Answer:", getPart2Answer(entries));
