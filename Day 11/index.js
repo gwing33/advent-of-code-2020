@@ -6,24 +6,24 @@ function joinData(data) {
 }
 
 function adjacentSeats(data, row, column) {
-  const above = data[row - 1];
-  const current = data[row];
-  const below = data[row + 1];
+  function findSeat(r, c, sr, sc) {
+    return data[r + sr] && data[r + sr][c + sc];
+  }
   return [
-    above && above[column - 1],
-    above && above[column],
-    above && above[column + 1],
-    current[column - 1],
-    current[column + 1],
-    below && below[column - 1],
-    below && below[column],
-    below && below[column + 1],
+    findSeat(row, column, -1, -1),
+    findSeat(row, column, -1, 0),
+    findSeat(row, column, -1, 1),
+    findSeat(row, column, 0, -1),
+    findSeat(row, column, 0, 1),
+    findSeat(row, column, 1, -1),
+    findSeat(row, column, 1, 0),
+    findSeat(row, column, 1, 1),
   ].filter((d) => !!d);
 }
 
-function adjacentSeatsPart2(data, row, column) {
+function adjacentSeatsFirstVisible(data, row, column) {
   function findSeat(r, c, sr, sc) {
-    const tl = data[r] && data[r][c];
+    const tl = data[r + sr] && data[r + sr][c + sc];
     if (tl === ".") {
       return findSeat(r + sr, c + sc, sr, sc);
     }
@@ -31,49 +31,52 @@ function adjacentSeatsPart2(data, row, column) {
   }
 
   return [
-    findSeat(row - 1, column - 1, -1, -1),
-    findSeat(row - 1, column, -1, 0),
-    findSeat(row - 1, column + 1, -1, 1),
-    findSeat(row, column - 1, 0, -1),
-    findSeat(row, column + 1, 0, 1),
-    findSeat(row + 1, column - 1, 1, -1),
-    findSeat(row + 1, column, 1, 0),
-    findSeat(row + 1, column + 1, 1, 1),
+    findSeat(row, column, -1, -1),
+    findSeat(row, column, -1, 0),
+    findSeat(row, column, -1, 1),
+    findSeat(row, column, 0, -1),
+    findSeat(row, column, 0, 1),
+    findSeat(row, column, 1, -1),
+    findSeat(row, column, 1, 0),
+    findSeat(row, column, 1, 1),
   ].filter((d) => !!d);
 }
 
-function adjustSeating(_data, part2 = false) {
+function adjustSeating(_data, limit = 4, firstVisible = false) {
   const data = parseData(_data);
   const _newData = data.map((r, i) => {
     return r.map((s, j) => {
       if (s === ".") {
         return s;
       }
-      const adjacents = part2
-        ? adjacentSeatsPart2(data, i, j)
+      const adjacents = firstVisible
+        ? adjacentSeatsFirstVisible(data, i, j)
         : adjacentSeats(data, i, j);
       if (s === "L") {
         return adjacents.includes("#") ? "L" : "#";
       }
-      const seatLimit = part2 ? 5 : 4;
-      return adjacents.filter((a) => a === "#").length >= seatLimit ? "L" : "#";
+      return adjacents.filter((a) => a === "#").length >= limit ? "L" : "#";
     });
   });
   const newData = joinData(_newData);
-  return newData !== _data ? adjustSeating(newData, part2) : newData;
+  return newData !== _data
+    ? adjustSeating(newData, limit, firstVisible)
+    : newData;
+}
+
+function countOccupiedSeats(data) {
+  return parseData(data).reduce((acc, d) => {
+    return acc + d.filter((s) => s === "#").length;
+  }, 0);
 }
 
 function getPart1Answer(data) {
   const result = adjustSeating(data);
-  return parseData(result).reduce((acc, d) => {
-    return acc + d.filter((s) => s === "#").length;
-  }, 0);
+  return countOccupiedSeats(result);
 }
 function getPart2Answer(data) {
-  const result = adjustSeating(data, true);
-  return parseData(result).reduce((acc, d) => {
-    return acc + d.filter((s) => s === "#").length;
-  }, 0);
+  const result = adjustSeating(data, 5, true);
+  return countOccupiedSeats(result);
 }
 
 const fullData = `LLLLL.LLL.LLLLLLLLLLLLLLL.LLLLLLLLL.LLLLLLLLLLLLL.LLLLLLL.LLLLLLL.LLLLL.LLLLLLLLLLLLLLLLLLL.LLLLL
