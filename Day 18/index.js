@@ -1,88 +1,92 @@
 function parseData(data, acc = []) {
-    if (!data) {
-        return acc;
-    }
-    
-    const c = data.charAt(0);
-    const rest = data.substring(1, data.length);
-    
-    if (c === ')') {
-        return [rest, acc];
-    }
-    
-    if (c === ' ') {
-        return parseData(rest, acc);
-    }
-    
-    if (['+', '*'].includes(c)) {
-        return parseData(rest, acc.concat(c));
-    }
-    
-    if (c === '(') {
-        const [_rest, group] = parseData(rest, []);
-        return parseData(_rest, acc.concat([group]));
-    }
-    
-    return parseData(rest, acc.concat(Number(c)));
+  if (!data) {
+    return acc;
+  }
+
+  const c = data.charAt(0);
+  const rest = data.substring(1, data.length);
+
+  if (c === ")") {
+    return [rest, acc];
+  }
+
+  if (c === " ") {
+    return parseData(rest, acc);
+  }
+
+  if (["+", "*"].includes(c)) {
+    return parseData(rest, acc.concat(c));
+  }
+
+  if (c === "(") {
+    const [_rest, group] = parseData(rest, []);
+    return parseData(_rest, acc.concat([group]));
+  }
+
+  return parseData(rest, acc.concat(Number(c)));
 }
 
 function calc(data) {
-    return data.reduce(([acc, opr], x) => {
-        if (Array.isArray(x)) {
-            const [r] = calc(x);
-            if (opr) {
-                return opr === '+' ? [acc + r, null] : [acc * r, null];
-            }
-            return [r, null];
+  return data.reduce(
+    ([acc, opr], x) => {
+      if (Array.isArray(x)) {
+        const [r] = calc(x);
+        if (opr) {
+          return opr === "+" ? [acc + r, null] : [acc * r, null];
         }
-        if (['+', '*'].includes(x)) {
-            return [acc, x];
+        return [r, null];
+      }
+      if (["+", "*"].includes(x)) {
+        return [acc, x];
+      }
+      if (typeof x === "number") {
+        if (opr) {
+          return opr === "+" ? [acc + x, null] : [acc * x, null];
         }
-        if (typeof x === 'number') {
-            if (opr) {
-                return opr === '+' ? [acc + x, null] : [acc * x, null];
-            }
-            return [x, null];
-        }
-        return [acc, opr];
-    }, [0, null]);
+        return [x, null];
+      }
+      return [acc, opr];
+    },
+    [0, null]
+  );
 }
 
 function getPart1Answer(datas) {
-    return datas.reduce((total, data) => {
-        const [val] = calc(parseData(data));
-        return total + val;
-    }, 0);
+  return datas.reduce((total, data) => {
+    const [val] = calc(parseData(data));
+    return total + val;
+  }, 0);
 }
 
 function calcDos(data) {
-    let skipNext = false;
-    const result = data.reduce((acc, x, i) => {
-        if (skipNext) {
-            skipNext = false;
-            return acc;
-        }
-        if (Array.isArray(x)) {
-            const [v] = calc(calcDos(x));
-            return acc.concat(v);
-        }
-        if (x === '+') {
-            skipNext = true;
-            const [nextVal] = Array.isArray(data[i + 1]) ? calc(calcDos(data[i + 1])) : [data[i + 1]];
-            // console.log(acc[acc.length - 1], nextVal);
-            return acc.slice(0, acc.length - 1).concat(acc[acc.length - 1] + nextVal);
-        }
-        return acc.concat(x);
-    }, [])
-    return result;
+  let skipNext = false;
+  const result = data.reduce((acc, x, i) => {
+    if (skipNext) {
+      skipNext = false;
+      return acc;
+    }
+    if (Array.isArray(x)) {
+      const [v] = calc(calcDos(x));
+      return acc.concat(v);
+    }
+    if (x === "+") {
+      skipNext = true;
+      const [nextVal] = Array.isArray(data[i + 1])
+        ? calc(calcDos(data[i + 1]))
+        : [data[i + 1]];
+      // console.log(acc[acc.length - 1], nextVal);
+      return acc.slice(0, acc.length - 1).concat(acc[acc.length - 1] + nextVal);
+    }
+    return acc.concat(x);
+  }, []);
+  return result;
 }
 
-
 function getPart2Answer(datas) {
-    return datas.reduce((total, data) => {
-        const [val] = calc(calcDos(parseData(data)));
-        return total + val;
-    }, 0);
+  return datas.reduce((total, data) => {
+    const [val] = calc(calcDos(parseData(data)));
+    return total + val;
+  }, 0);
 }
 
 const _data = `(6 + 6 * 9) * 7 * 9 + (7 * (7 + 3 * 4 + 8 * 9 + 2) + 3 * 2 * 4 + 5) + 8 * 2
@@ -462,7 +466,9 @@ const _data = `(6 + 6 * 9) * 7 * 9 + (7 * (7 + 3 * 4 + 8 * 9 + 2) + 3 * 2 * 4 + 
 8 + 8 + 8 * 5 + (7 * 8 + 2 + 8) * ((7 * 4 * 2) + 4)
 5 * (4 + 2 * 9 + 4 + 5) * 6 + 7 + (4 + 3 * (6 * 2) * 4 * 5 + (8 * 2 * 6 * 9 + 7))
 3 * (9 * 3) + 6 + 5 + 4 * ((6 * 7 + 9 + 6) * 8 * 5 * (8 + 9 * 6 * 5) * 7)
-7 * 4 + (8 * 4 + (6 + 9 + 7 + 3) + 8) * 8 + (9 * 2 * 2 + 4 + 9 * (3 + 5 * 9 * 9 * 5 * 9)) * (3 * 9 * 6 * 9)`.split('\n');
+7 * 4 + (8 * 4 + (6 + 9 + 7 + 3) + 8) * 8 + (9 * 2 * 2 + 4 + 9 * (3 + 5 * 9 * 9 * 5 * 9)) * (3 * 9 * 6 * 9)`.split(
+  "\n"
+);
 
-console.log('Part 1 Answer:', getPart1Answer(_data));
-console.log('Part 2 Answer:', getPart2Answer(_data));
+console.log("Part 1 Answer:", getPart1Answer(_data));
+console.log("Part 2 Answer:", getPart2Answer(_data));
